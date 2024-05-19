@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  # db:
+  #   image: postgres:latest
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=postgres
+  #   volumes:
+  #     - postgresql-data5:/var/lib/postgresql/data
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+  node:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    command: bash -c 'python3 node.py'
+    depends_on:
+      - redis
+    #   - db
+    volumes:
+      - ./app/:/app/
+    restart: always
+    stop_signal: SIGINT
+    stop_grace_period: 2m
+    env_file:
+      - .env
+
+volumes:
+  redis_data:
+    external: false
+  # postgresql-data5:

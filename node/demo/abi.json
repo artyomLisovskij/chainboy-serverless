@@ -1,0 +1,65 @@
+[
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "_ipfs_hash",
+          "type": "string"
+        }
+      ],
+      "name": "NewTask",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "_ipfs_hash",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "_result",
+          "type": "string"
+        }
+      ],
+      "name": "TaskCompleted",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_ipfs_hash",
+          "type": "string"
+        }
+      ],
+      "name": "add_task",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_ipfs_hash",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_result",
+          "type": "string"
+        }
+      ],
+      "name": "complete_task",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+]

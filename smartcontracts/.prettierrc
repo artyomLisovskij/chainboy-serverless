@@ -1,0 +1,17 @@
+{
+  "plugins": ["prettier-plugin-solidity"],
+  "overrides": [
+    {
+      "files": "contracts/**/*.sol",
+      "options": {
+        "parser": "solidity-parse",
+        "printWidth": 120,
+        "tabWidth": 4,
+        "useTabs": false,
+        "singleQuote": false,
+        "bracketSpacing": false,
+        "endOfLine": "lf"
+      }
+    }
+  ]
+}

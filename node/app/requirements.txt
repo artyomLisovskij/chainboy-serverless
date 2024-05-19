@@ -1,0 +1,11 @@
+requests
+python-dotenv
+pinata
+# uvicorn[standard]
+redis
+web3==6.8.0
+base58
+eth-event
+docker>=2
+structlog>=15.3
+python-dateutil>=2.4
