@@ -1,7 +1,7 @@
 requests
 python-dotenv
 pinata
-# uvicorn[standard]
+uvicorn[standard]
 redis
 web3==6.8.0
 base58

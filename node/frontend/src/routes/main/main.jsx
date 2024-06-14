@@ -6,6 +6,7 @@ import { useAccount, useDisconnect } from "wagmi";
 // import { setIsOpenSubmitted, setIsOpenConnect } from "../../redux/base/base"
 // import { useDispatch } from 'react-redux'
 // import { toast } from 'react-toastify';
+import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
 import AceEditor from "react-ace";
 
@@ -24,8 +25,18 @@ function Main() {
 print(31**int(INPUT))
 `);
   const [ipfs_hash, updateIPFS] = useState(false);
-  function upload() {
-    console.log(mycode)
+  async function upload() {
+    const response = await axios(process.env.REACT_APP_URL + `/api/create`, {
+			method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify({ 
+        code: mycode
+      })
+		});
+    updateIPFS(response.data.ipfs_hash)
   }
   return (
     <>

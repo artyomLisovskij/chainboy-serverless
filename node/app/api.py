@@ -20,9 +20,10 @@ class Task(BaseModel):
 app = FastAPI()
 
 
-@app.post("/create/")
+@app.post("/create")
 async def create_task(task: Task):
     open("/tmp/temp.py", "w").write(task.code)
-    response = pinata.pin_file("/tmp/test.py")
+    response = pinata.pin_file("/tmp/temp.py")
+    print(response)
     ipfs_hash = response["data"]["IpfsHash"]
     return {"ipfs_hash": ipfs_hash}
