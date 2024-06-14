@@ -13,6 +13,7 @@ services:
     image: redis:alpine
     volumes:
       - redis_data:/data
+  
   node:
     build:
       context: .
@@ -28,6 +29,31 @@ services:
     stop_grace_period: 2m
     env_file:
       - .env
+
+  api:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    command: bash -c 'uvicorn api.asgi:app --port 8000 --host 0.0.0.0'
+    volumes:
+      - ./app/:/app/
+    restart: always
+    stop_signal: SIGINT
+    stop_grace_period: 2m
+    env_file:
+      - .env
+  
+  nginx:
+    command: nginx -g "daemon off;"
+    depends_on:
+      - api
+    image: nginx:alpine
+    restart: on-failure
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend/prod/:/var/www/app/frontend/
+    ports:
+      - "127.0.0.1:8000:8000"
 
 volumes:
   redis_data:
