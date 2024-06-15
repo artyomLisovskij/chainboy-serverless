@@ -11,7 +11,7 @@ interface IChainBoy {
         address requester;
         uint256 counter;
         string ipfs_function;
-        bytes32 variable; // TODO: make array in future
+        string variable; // TODO: make array in future
     }
 
     struct Solution {
@@ -21,7 +21,7 @@ interface IChainBoy {
     }
 
     event Initialized(address _admin);
-    event NewRequest(bytes32 _request_id, string _ipfs, bytes32 _variable);
+    event NewRequest(bytes32 _request_id, string _ipfs, string _variable);
     event NewSolutionBatch(bytes32 _hash, address _signer, string _solution);
     event NewSolution(bytes32 _hash, address _signer, string _solution);
     event NewConsensus(bytes32 _hash, address _signer, string _solution, bytes _sign);

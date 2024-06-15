@@ -1,6 +1,6 @@
 import { useAccount, useChains, usePublicClient, useWalletClient, useEstimateFeesPerGas } from "wagmi"
-// import { parseEther, formatEther } from "viem";
-import { getContract } from "viem";
+import { parseEther } from "viem";
+import { getContract, stringToBytes } from "viem";
 import abi from "../abi.json";
 
 const useContract = () => {
@@ -24,14 +24,46 @@ const useContract = () => {
         }
     });
 
-    const newTask = async() => {
-        console.log(contract);
-        console.log(feeData);
+    const newTask = async(amount, ipfs, variable) => {
+        const gasLimit = await contract.estimateGas.newRequest({
+            args: [
+                ipfs,
+                variable, 
+            ],
+            value: parseEther(parseFloat(amount).toFixed(5).toString())
+        });
+        const buyTx = await contract.write.newRequest({
+            args: [
+                ipfs,
+                variable
+            ],
+            value: parseEther(parseFloat(amount).toFixed(5).toString()),
+            gas: gasLimit,
+            gasPrice: feeData.gasPrice
+        })
+        return buyTx
+    }
+    const getResult = async(request_id) => {
+        return await contract.read.getResult([
+            stringToBytes(
+                request_id, 
+                { size: 32 } 
+            )
+        ])
     }
 
+    const unwatch = publicClient.watchContractEvent({
+        address: process.env.REACT_APP_CONTRACT_ADDRESS,
+        abi: abi,
+        onLogs: function(logs) {
+            console.log(logs)
+        }
+    })
 
     return {
-        newTask
+        newTask,
+        unwatch, 
+        getResult
     }
 }
 

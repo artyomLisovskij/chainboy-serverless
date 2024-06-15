@@ -10,3 +10,4 @@ docker>=2
 structlog>=15.3
 python-dateutil>=2.4
 fastapi
+websocket-client

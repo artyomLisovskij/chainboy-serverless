@@ -51,7 +51,7 @@ contract ChainBoy is IChainBoy, Initializable, OwnableUpgradeable {
         emit Initialized(msg.sender);
     }
 
-    function newRequest(string memory _ipfsFunction, bytes32 _variable) external payable returns (bytes32) {
+    function newRequest(string memory _ipfsFunction, string memory _variable) external payable returns (bytes32) {
         require(msg.value >= 1e14, "money problem");
         bytes32 _hash = keccak256(abi.encodePacked(block.chainid, msg.sender, address_counter[msg.sender]));
         require(!requests[_hash].exists, "already exists");

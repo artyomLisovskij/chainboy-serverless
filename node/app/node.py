@@ -70,7 +70,7 @@ if __name__ == "__main__":
     print(message)
     print('Node started')
 
-    requests = {}
+    our_requests = {}
     while not killer.kill_now:
         try:
             result = ws.recv()
@@ -81,13 +81,16 @@ if __name__ == "__main__":
                     request_id = event["data"][0]["value"]
                     ipfs_hash = event["data"][1]["value"]
                     variable = event["data"][2]["value"]
-                    if request_id not in requests.keys():
-                        requests[request_id] = {}
-                        requests[request_id]['ipfs_hash'] = ipfs_hash
-                        requests[request_id]['variable'] = variable
-                        requests[request_id]['solutions'] = {}
-                    
-                    code = requests.get("https://gateway.pinata.cloud/ipfs/" + ipfs_hash).text
+                    if request_id not in our_requests.keys():
+                        our_requests[request_id] = {}
+                        our_requests[request_id]['ipfs_hash'] = ipfs_hash
+                        our_requests[request_id]['variable'] = variable
+                        our_requests[request_id]['solutions'] = {}
+                    print([request_id, ipfs_hash, variable])
+                    source_code = requests.get("https://gateway.pinata.cloud/ipfs/" + ipfs_hash).text
+                    code = 'INPUT = "' + str(variable) + '"' + "\n" + source_code
+                    print(code)
+                    print(variable)
                     files = [
                         {
                             "name": "main.py", 
@@ -99,7 +102,7 @@ if __name__ == "__main__":
                         "python", "python3 main.py", files=files, limits=limits
                     )
                     str_result = result["stdout"].decode("utf-8").replace("\n", "")
-                    requests[request_id]['solutions'][account.address] = str_result
+                    our_requests[request_id]['solutions'][account.address] = str_result
                     nonce = w3.eth.get_transaction_count(account.address, "pending")
                     message_hash = Web3.solidity_keccak(["bytes32","string"], [request_id, str_result])
                     sign = w3.eth.account.sign_message(encode_defunct(message_hash), private_key=account.key).signature.hex()
@@ -126,17 +129,17 @@ if __name__ == "__main__":
                     signer = event["data"][1]["value"]
                     solution = event["data"][2]["value"]
                     # check consensus first
-                    if request_id not in requests.keys():
-                        requests[request_id] = {}
-                        requests[request_id]['ipfs_hash'] = ipfs_hash
-                        requests[request_id]['variable'] = variable
-                        requests[request_id]['solutions'] = {}
+                    if request_id not in our_requests.keys():
+                        our_requests[request_id] = {}
+                        our_requests[request_id]['ipfs_hash'] = ipfs_hash
+                        our_requests[request_id]['variable'] = variable
+                        our_requests[request_id]['solutions'] = {}
                     if signer.lower() != account.address.lower():
-                        requests[request_id]['solutions'][account.address] = solution
+                        our_requests[request_id]['solutions'][account.address] = solution
                     
                     total_supply = contract.functions.totalSupply().call() // DECIMALS
                     solutions_weights = {}
-                    for key, value in requests[request_id]['solutions'].items():
+                    for key, value in our_requests[request_id]['solutions'].items():
                         if value not in solutions_weights.keys():
                             solutions_weights[value] = 0
                         solutions_weights[value] += contract_token.functions.balanceOf(key).call() // DECIMALS

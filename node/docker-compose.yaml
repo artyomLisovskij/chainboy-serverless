@@ -8,37 +8,40 @@ services:
     command: bash -c 'python3 node.py -n1'
     volumes:
       - ./app/:/app/
+      - /var/run/docker.sock:/var/run/docker.sock
     restart: always
     stop_signal: SIGINT
-    stop_grace_period: 2m
+    stop_grace_period: 1m
     env_file:
       - .env
 
-  node2:
-    build:
-      context: .
-      dockerfile: app/Dockerfile
-    command: bash -c 'python3 node.py -n2'
-    volumes:
-      - ./app/:/app/
-    restart: always
-    stop_signal: SIGINT
-    stop_grace_period: 2m
-    env_file:
-      - .env
+  # node2:
+  #   build:
+  #     context: .
+  #     dockerfile: app/Dockerfile
+  #   command: bash -c 'python3 node.py -n2'
+  #   volumes:
+  #     - ./app/:/app/
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   restart: always
+  #   stop_signal: SIGINT
+  #   stop_grace_period: 2m
+  #   env_file:
+  #     - .env
 
-  node3:
-    build:
-      context: .
-      dockerfile: app/Dockerfile
-    command: bash -c 'python3 node.py -n3'
-    volumes:
-      - ./app/:/app/
-    restart: always
-    stop_signal: SIGINT
-    stop_grace_period: 2m
-    env_file:
-      - .env
+  # node3:
+  #   build:
+  #     context: .
+  #     dockerfile: app/Dockerfile
+  #   command: bash -c 'python3 node.py -n3'
+  #   volumes:
+  #     - ./app/:/app/
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   restart: always
+  #   stop_signal: SIGINT
+  #   stop_grace_period: 2m
+  #   env_file:
+  #     - .env
   
   frontend:
     build:

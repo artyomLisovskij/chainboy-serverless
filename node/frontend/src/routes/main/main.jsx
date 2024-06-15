@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // import { useSelector } from 'react-redux'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useAccount, useDisconnect } from "wagmi";
-// import useContract from "../../hooks/useContract";
+import useContract from "../../hooks/useContract";
 // import { setIsOpenSubmitted, setIsOpenConnect } from "../../redux/base/base"
 // import { useDispatch } from 'react-redux'
 // import { toast } from 'react-toastify';
@@ -14,17 +14,25 @@ import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 
+
+
+
 function Main() {
   // const dispatch = useDispatch();
   const { open } = useWeb3Modal();
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const [mycode, updateCode] = useState(`# Input from smart contract would be loaded into the INPUT variable (bytes32 presented as string)
-# Write your code using INPUT variable(or not using it).
+# Write your code using {INPUT} variable(or not using it).
 # To output result back to your smart-contract use print statement. It would be converted to bytes32 inside your contract.
 print(31**int(INPUT))
 `);
   const [ipfs_hash, updateIPFS] = useState(false);
+  const { 
+    newTask,
+    unwatch, 
+    getResult
+} = useContract();
   async function upload() {
     const response = await axios(process.env.REACT_APP_URL + `/api/create`, {
 			method: "POST",
@@ -38,6 +46,20 @@ print(31**int(INPUT))
 		});
     updateIPFS(response.data.ipfs_hash)
   }
+  async function createTask() {
+    const enteredVariable = prompt('Please enter variable to execute code serverless')
+    let tx = await newTask(0.01, ipfs_hash, enteredVariable)
+    console.log(tx)
+    unwatch()
+  }
+
+  async function checkResult() {
+    const enteredVariable = prompt('Please enter request_id from task creation event')
+    let tx = await getResult(enteredVariable)
+    alert(tx)
+  }
+
+  
   return (
     <>
         { 
@@ -90,8 +112,28 @@ print(31**int(INPUT))
               <>
                 <p>
                   Your code has been uploaded with IPFS hash to pinata IPFS: {ipfs_hash}.
-                  Now you can 
+                  Now you can:
                 </p>
+                <button 
+                    className="createtask"
+                    onClick={
+                        () => {
+                          createTask()
+                        }
+                    }
+                >
+                  Create task
+                </button>
+                <button 
+                    className="checkresult"
+                    onClick={
+                        () => {
+                          checkResult()
+                        }
+                    }
+                >
+                  Check task execution consensused result
+                </button>
               </>
             :
             <>

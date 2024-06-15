@@ -11,4 +11,4 @@ async function main() {
 }
 
 main();
-// deployed: https://explorer.test.siberium.net/address/0xdFCB907a04806cf473d2Eb1662dfC52bb0Ac445B
+// deployed: https://explorer.test.siberium.net/address/0xFF609c5F447686604C864D745286dd7ddb57D396
