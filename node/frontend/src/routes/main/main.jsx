@@ -1,24 +1,20 @@
 import React, { useState } from 'react';
-// import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useAccount, useDisconnect } from "wagmi";
 import useContract from "../../hooks/useContract";
-// import { setIsOpenSubmitted, setIsOpenConnect } from "../../redux/base/base"
-// import { useDispatch } from 'react-redux'
-// import { toast } from 'react-toastify';
+import { setTaskTxid, setRequestId } from "../../redux/base/base"
+import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify';
 import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
 import AceEditor from "react-ace";
-
 import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-
-
-
 function Main() {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { open } = useWeb3Modal();
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
@@ -28,12 +24,18 @@ function Main() {
 print(31**int(INPUT))
 `);
   const [ipfs_hash, updateIPFS] = useState(false);
+  const { request_id, task_txid } = useSelector((state) => state.base);
   const { 
     newTask,
-    unwatch, 
-    getResult
-} = useContract();
+    unwatch
+  } = useContract();
+  let toast_id;
   async function upload() {
+    toast_id = toast.loading("Upload task to IPFS is pending",{
+      icon: false,
+      theme: 'dark',
+      position: "top-center"
+    });
     const response = await axios(process.env.REACT_APP_URL + `/api/create`, {
 			method: "POST",
       headers: {
@@ -45,20 +47,31 @@ print(31**int(INPUT))
       })
 		});
     updateIPFS(response.data.ipfs_hash)
+    toast.update(toast_id, {
+      render: "Task uploaded to IPFS!", 
+      icon: "🟢",
+      theme: 'dark',
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      type: "success",
+      isLoading: false
+    });
   }
+
   async function createTask() {
+    dispatch(setTaskTxid(''))
+    dispatch(setRequestId(''))
     const enteredVariable = prompt('Please enter variable to execute code serverless')
     let tx = await newTask(0.01, ipfs_hash, enteredVariable)
     console.log(tx)
+    dispatch(setTaskTxid(tx))
     unwatch()
   }
-
-  async function checkResult() {
-    const enteredVariable = prompt('Please enter request_id from task creation event')
-    let tx = await getResult(enteredVariable)
-    alert(tx)
-  }
-
   
   return (
     <>
@@ -124,16 +137,10 @@ print(31**int(INPUT))
                 >
                   Create task
                 </button>
-                <button 
-                    className="checkresult"
-                    onClick={
-                        () => {
-                          checkResult()
-                        }
-                    }
-                >
-                  Check task execution consensused result
-                </button>
+                <p>
+                  Task txid: {task_txid}<br />
+                  Request id: {request_id}
+                </p>
               </>
             :
             <>

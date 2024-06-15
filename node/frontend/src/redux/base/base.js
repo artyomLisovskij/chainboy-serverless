@@ -3,11 +3,15 @@ import { createSlice } from '@reduxjs/toolkit'
 const base = createSlice({
 	name: 'base',
 	initialState: {
-		tasks: []
+		task_txid: '',
+		request_id: ''
 	},
 	reducers: {
-		setTasks(state, action) {
-			state.tasks = action.payload
+		setTaskTxid(state, action) {
+			state.task_txid = action.payload
+		},
+		setRequestId(state, action) {
+			state.request_id = action.payload
 		},
 	}
 })
@@ -15,5 +19,6 @@ const base = createSlice({
 export default base.reducer
 
 export const { 
-	setTasks
+	setTaskTxid,
+	setRequestId
 } = base.actions

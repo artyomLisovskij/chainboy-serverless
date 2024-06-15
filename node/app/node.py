@@ -16,9 +16,10 @@ import websocket
 from eth_event import decode_logs, get_topic_map
 import requests
 import epicbox
+from eth_account.messages import encode_defunct
 
 
-epicbox.configure(profiles=[epicbox.Profile("python", "python:3.6.5-alpine")])
+epicbox.configure(profiles=[epicbox.Profile("python", "python:3.10-slim")])
 
 def sign_and_send_tx(w3, tx, account):
     signed_tx = w3.eth.account.sign_transaction(tx, private_key=account.key)
@@ -137,7 +138,7 @@ if __name__ == "__main__":
                     if signer.lower() != account.address.lower():
                         our_requests[request_id]['solutions'][account.address] = solution
                     
-                    total_supply = contract.functions.totalSupply().call() // DECIMALS
+                    total_supply = contract_token.functions.totalSupply().call() // DECIMALS
                     solutions_weights = {}
                     for key, value in our_requests[request_id]['solutions'].items():
                         if value not in solutions_weights.keys():
