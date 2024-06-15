@@ -15,3 +15,5 @@ async function main() {
 }
 
 main();
+
+// deployed: https://explorer.test.siberium.net/address/0x3cf1Ad0C68AC60a06B573111Ef82FB29FfbF67F7

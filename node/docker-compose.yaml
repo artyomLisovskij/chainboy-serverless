@@ -1,19 +1,37 @@
 version: "3"
 
 services:
-  redis:
-    image: redis:alpine
-    volumes:
-      - redis_data:/data
-  
-  node:
+  node1:
     build:
       context: .
       dockerfile: app/Dockerfile
-    command: bash -c 'python3 node.py'
-    depends_on:
-      - redis
-    #   - db
+    command: bash -c 'python3 node.py -n1'
+    volumes:
+      - ./app/:/app/
+    restart: always
+    stop_signal: SIGINT
+    stop_grace_period: 2m
+    env_file:
+      - .env
+
+  node2:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    command: bash -c 'python3 node.py -n2'
+    volumes:
+      - ./app/:/app/
+    restart: always
+    stop_signal: SIGINT
+    stop_grace_period: 2m
+    env_file:
+      - .env
+
+  node3:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    command: bash -c 'python3 node.py -n3'
     volumes:
       - ./app/:/app/
     restart: always
@@ -61,6 +79,3 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
 
-volumes:
-  redis_data:
-    external: false
