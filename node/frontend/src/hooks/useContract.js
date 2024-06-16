@@ -58,31 +58,13 @@ const useContract = () => {
         address: process.env.REACT_APP_CONTRACT_ADDRESS,
         abi: abi,
         onLogs: function(logs) {
-            console.log(logs[0].eventName)
-            console.log(logs[0])
-            if (logs[0].transactionHash === task_txid && logs[0].eventName === "NewRequest") {
-                dispatch(setRequestId(logs[0].args._request_id))
-                request_id = logs[0].args._request_id;
-                toast.success("Your task got unique request id: " + request_id + ". Now wait for nodes solutions and consensus across their solutions.", {
-                    icon: "🕗",
-                    theme: 'dark',
-                    position: "top-center",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    type: "success",
-                    isLoading: false
-                });
-            }
-            if (logs[0].eventName === 'NewSolution' && logs[0].args._hash == request_id) {
-                if (!solutions[logs[0].args._signer]) {
-                    solutions[logs[0].args._signer] = logs[0].args._solution;
-                    console.log("Solution from node " + logs[0].args._signer + " got, result is: " + logs[0].args._solution)
-                    toast.success("Solution from node " + logs[0].args._signer + " got, result is: " + logs[0].args._solution, {
-                        icon: "🟡",
+            for (let index = 0; index < logs.length; index++) {
+                const log = logs[index];
+                if (log.transactionHash === task_txid && log.eventName === "NewRequest") {
+                    dispatch(setRequestId(log.args._request_id))
+                    request_id = log.args._request_id;
+                    toast.success("Your task got unique request id: " + request_id + ". Now wait for nodes solutions and consensus across their solutions.", {
+                        icon: "🕗",
                         theme: 'dark',
                         position: "top-center",
                         autoClose: false,
@@ -95,24 +77,43 @@ const useContract = () => {
                         isLoading: false
                     });
                 }
-            }
-            if (logs[0].eventName === 'NewConsensus' && logs[0].args._hash == request_id) {
-                if (!consensus) {
-                    consensus = true;
-                    console.log("Consensus from node " + logs[0].args._signer + " got, consensus result is: " + logs[0].args._solution)
-                    toast.success("Consensus from node " + logs[0].args._signer + " got, consensus result is: " + logs[0].args._solution, {
-                        icon: "🟢",
-                        theme: 'dark',
-                        position: "top-center",
-                        autoClose: false,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        type: "success",
-                        isLoading: false
-                    });
+                if (log.eventName === 'NewSolution' && log.args._hash == request_id) {
+                    if (!solutions[log.args._signer]) {
+                        solutions[log.args._signer] = log.args._solution;
+                        console.log("Solution from node " + log.args._signer + " got, result is: " + log.args._solution)
+                        toast.success("Solution from node " + log.args._signer + " got, result is: " + log.args._solution, {
+                            icon: "🟡",
+                            theme: 'dark',
+                            position: "top-center",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            type: "success",
+                            isLoading: false
+                        });
+                    }
+                }
+                if (log.eventName === 'NewConsensus' && log.args._hash == request_id) {
+                    if (!consensus) {
+                        consensus = true;
+                        console.log("Consensus from node " + log.args._signer + " got, consensus result is: " + log.args._solution)
+                        toast.success("Consensus from node " + log.args._signer + " got, consensus result is: " + log.args._solution, {
+                            icon: "🟢",
+                            theme: 'dark',
+                            position: "top-center",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            type: "success",
+                            isLoading: false
+                        });
+                    }
                 }
             }
         }

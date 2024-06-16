@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import Request, FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
@@ -29,6 +29,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+txids = []
 
 @app.post("/create")
 async def create_task(task: Task):
@@ -37,3 +38,15 @@ async def create_task(task: Task):
     print(response)
     ipfs_hash = response["data"]["IpfsHash"]
     return {"ipfs_hash": ipfs_hash}
+
+
+@app.post("/txid")
+async def post_txid(request: Request):
+    result = await request.json()
+    txids.append(result['hash'])
+    return {"status": "ok"}
+    
+
+@app.get("/txids")
+async def get_txid():
+    return {"txids": txids}
